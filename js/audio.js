@@ -22,7 +22,7 @@ export function toggleSoundState() {
 }
 
 // Volume State
-let musicVolume = 1.0;
+let musicVolume = 0.6;
 let sfxVolume = 0.8;
 export let isMusicOn = true;
 export let isSfxOn = true;
