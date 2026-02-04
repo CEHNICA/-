@@ -245,6 +245,12 @@ export function preloadAllSounds() {
     // Door sound is preloaded via loadDoorSound()
 }
 
+export function startPreloadingFlow() {
+    console.log("Deferred loading of Rain sound started...");
+    flowMusic.preload = 'auto';
+    flowMusic.load();
+}
+
 export function playDoorSound() {
     if (!isSfxOn) return;
 

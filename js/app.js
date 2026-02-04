@@ -26,6 +26,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Auto-play removed. Only triggered by Fullscreen interaction.
     Audio.playIntroMusic(); // Use explicit intro music function, handles interaction fallback
+
+    // Smart Preload: Start loading "Rain" music (24MB) 3 seconds after Intro starts
+    // This avoids blocking the initial UI rendering but ensures it's ready when user clicks "Start Focus"
+    setTimeout(() => {
+        Audio.startPreloadingFlow();
+    }, 3000);
 });
 
 function setupEventListeners() {
