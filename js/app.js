@@ -75,7 +75,7 @@ function setupEventListeners() {
             const startScreen = document.getElementById('flow-start-screen');
             if (startScreen && startScreen.style.display !== 'none') {
                 Audio.initAudio();
-                Audio.playBackgroundMusic();
+                Audio.playIntroMusic();
             }
         }
         handleKeydown(e);
@@ -111,7 +111,7 @@ function setupEventListeners() {
                 document.documentElement.requestFullscreen().catch(e => console.log(e));
             }
             // 2. Ensure Music is Playing (User interaction unlocks audio)
-            Audio.playBackgroundMusic();
+            Audio.playIntroMusic();
 
             // Visual feedback
             fsBtn.style.display = 'none';
