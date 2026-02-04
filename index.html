@@ -12,6 +12,11 @@
     </style>
     <script>(function () { const n = Date.now(), l = localStorage.getItem("ts"); if (l && (n - l < 2000)) { document.write("<div style=\"display:flex;justify-content:center;align-items:center;height:100vh;\">⚠️ Duplicate...</div>"); window.stop(); setTimeout(() => window.close(), 100); throw "Dup"; } localStorage.setItem("ts", n); const bc = new BroadcastChannel("lock"); bc.postMessage("chk"); bc.onmessage = e => { if (e.data === "ali") { document.write("⚠️ Already running"); window.stop(); self.close(); } if (e.data === "chk") bc.postMessage("ali"); }; })();</script>
     <title>NotebookLM 互动闪卡 - 极致沉浸版</title>
+    <!-- KILL SWITCH: Unregister SW and Clear Cache -->
+    <script>
+        if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(r => r.forEach(w => w.unregister()));
+        if ('caches' in window) caches.keys().then(k => k.forEach(n => caches.delete(n)));
+    </script>
 
     <!-- MathJax 配置 -->
     <script>
