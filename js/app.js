@@ -111,14 +111,7 @@ function setupEventListeners() {
     // Fullscreen Hint Button (Also triggers music if blocked)
     const fsBtn = document.getElementById('fullscreen-hint-btn');
     if (fsBtn) {
-        // Auto-hide after 3 seconds
-        setTimeout(() => {
-            if (fsBtn.style.display !== 'none') {
-                fsBtn.style.transition = 'opacity 1s ease';
-                fsBtn.style.opacity = '0';
-                setTimeout(() => fsBtn.style.display = 'none', 1000);
-            }
-        }, 3000);
+
 
         fsBtn.addEventListener('click', () => {
             // 1. Try Fullscreen
