@@ -14,9 +14,9 @@ export function toggleSoundState() {
     initAudio();
 
     // 同步背景音乐静音状态
-    if (bgMusic) {
-        bgMusic.muted = !isSoundOn;
-    }
+    // Sync volume/mute state
+    setMusicVolume(isSoundOn && isMusicOn ? musicVolume : 0);
+    // SFX toggle is checked in play functions
 
     return isSoundOn;
 }
@@ -41,7 +41,8 @@ export function setSfxVolume(val) {
 
 export function toggleMusic(state) {
     isMusicOn = state;
-    if (bgMusic) bgMusic.volume = isMusicOn ? musicVolume : 0;
+    isMusicOn = state;
+    setMusicVolume(musicVolume);
 }
 
 export function toggleSfx(state) {
@@ -114,68 +115,113 @@ export function playSuccessSound() {
     });
 }
 // Background Music System
-// 1. Intro Music (Meditation)
-export let introMusic = new Audio('冥想.MP3');
-introMusic.loop = true;
-introMusic.volume = musicVolume;
+// Background Music System
 
-// 2. Flow Music (Rain)
+// 1. Intro Music (Meditation) - Web Audio API for zero latency
+let introBuffer = null;
+let introSource = null;
+let introGain = null;
+
+async function loadIntroSound() {
+    try {
+        initAudio(); // Ensure context allowed
+        const response = await fetch('冥想.MP3');
+        const arrayBuffer = await response.arrayBuffer();
+        introBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+    } catch (e) {
+        console.error("Failed to load intro music:", e);
+    }
+}
+loadIntroSound(); // Start fetching immediately
+
+// 2. Flow Music (Rain) - Keep as HTML5 Audio (Streaming suitable for large file)
 export let flowMusic = new Audio('下雨.mp3');
 flowMusic.loop = true;
 flowMusic.volume = musicVolume;
 
-// Current Active Music Track (Default to Intro)
-export let currentBgMusic = introMusic;
-export let bgMusic = currentBgMusic; // Alias for backward compatibility if needed temporarily
+// Track state ('intro' | 'flow' | null)
+let currentMode = 'intro';
 
-
-// Helper to switch tracks
 export function playIntroMusic() {
-    if (bgMusic === flowMusic) {
-        flowMusic.pause();
-        flowMusic.currentTime = 0;
-    }
-    bgMusic = introMusic;
-    currentBgMusic = introMusic;
+    // Stop Flow if playing
+    flowMusic.pause();
+    flowMusic.currentTime = 0;
+    currentMode = 'intro';
+
     playBackgroundMusic();
 }
 
 export function playFlowMusic() {
-    if (bgMusic === introMusic) {
-        introMusic.pause();
-        introMusic.currentTime = 0;
+    // Stop Intro if playing
+    if (introSource) {
+        try { introSource.stop(); } catch (e) { }
+        introSource = null;
     }
-    bgMusic = flowMusic;
-    currentBgMusic = flowMusic;
+    currentMode = 'flow';
+
     playBackgroundMusic();
 }
 
 export function playBackgroundMusic() {
-    if (!isMusicOn) {
-        bgMusic.pause();
-        return;
-    }
-    bgMusic.volume = musicVolume;
+    if (!isMusicOn) return;
 
-    // Try to play - catch autoplay policy errors
-    bgMusic.play().catch(e => {
-        console.log("Autoplay blocked, waiting for interaction:", e);
-        const startOnInteraction = () => {
-            if (isMusicOn) bgMusic.play();
-            document.body.removeEventListener('click', startOnInteraction);
-            document.body.removeEventListener('keydown', startOnInteraction);
-        };
-        document.body.addEventListener('click', startOnInteraction);
-        document.body.addEventListener('keydown', startOnInteraction);
-    });
+    initAudio(); // Essential for Web Audio
+
+    if (currentMode === 'intro') {
+        if (!introBuffer) return; // Not loaded yet
+        if (introSource) return; // Already playing
+
+        try {
+            introSource = audioCtx.createBufferSource();
+            introSource.buffer = introBuffer;
+            introSource.loop = true;
+
+            introGain = audioCtx.createGain();
+            introGain.gain.value = musicVolume;
+
+            introSource.connect(introGain);
+            introGain.connect(audioCtx.destination);
+            introSource.start(0);
+        } catch (e) {
+            console.error(e);
+        }
+    } else if (currentMode === 'flow') {
+        flowMusic.volume = musicVolume;
+        flowMusic.play().catch(e => {
+            console.log("Flow music autoplay blocked", e);
+            // Interaction logic handled by app.js usually, or add here if needed
+        });
+    }
+}
+
+export function setMusicVolume(val) {
+    musicVolume = val;
+    // Update Flow
+    flowMusic.volume = isMusicOn ? musicVolume : 0;
+
+    // Update Intro (Active Gain)
+    if (introGain) {
+        introGain.gain.value = isMusicOn ? musicVolume : 0;
+    }
 }
 
 export function stopBackgroundMusic() {
-    introMusic.pause();
+    // Stop Intro
+    if (introSource) {
+        try { introSource.stop(); } catch (e) { }
+        introSource = null;
+    }
+    // Stop Flow
     flowMusic.pause();
-    introMusic.currentTime = 0;
     flowMusic.currentTime = 0;
 }
+
+// Remove legacy bgMusic export usage if possible, or support it minimally
+export let bgMusic = {
+    // Mock interface to prevent crash if other files access bgMusic directly
+    // Ideally refactor app.js to not use this.
+    pause: stopBackgroundMusic
+};
 
 // Door Opening Sound (Web Audio API for Zero Latency)
 let doorBuffer = null;
@@ -198,7 +244,7 @@ loadDoorSound();
 // Preload all audio files on page load for instant playback
 export function preloadAllSounds() {
     // Trigger loading by loading metadata
-    [victorySound, realFlipSound, introMusic, flowMusic].forEach(audio => {
+    [victorySound, realFlipSound, flowMusic].forEach(audio => {
         audio.load();
     });
     // Door sound is preloaded via loadDoorSound()
