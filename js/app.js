@@ -92,6 +92,9 @@ function setupEventListeners() {
                 Audio.initAudio();
                 Audio.playIntroMusic();
             }
+            // Also hide the hint button if present
+            const fsBtn = document.getElementById('fullscreen-hint-btn');
+            if (fsBtn) fsBtn.style.display = 'none';
         }
         handleKeydown(e);
     });
