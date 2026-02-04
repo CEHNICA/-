@@ -1,0 +1,13 @@
+{
+  "name": "quiz-app",
+  "version": "1.0.0",
+  "description": "Flashcard Quiz App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "basic-auth": "^2.0.1",
+    "express": "^4.18.2"
+  }
+}

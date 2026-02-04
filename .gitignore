@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Backups
+backups/
+
+# Archives
+*.tar.gz
+*.zip
+
+# Backup files
+*.backup*
+*副本*
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Package lock (optional, can be included)
+# package-lock.json
