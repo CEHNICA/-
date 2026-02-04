@@ -27,13 +27,7 @@ let sfxVolume = 0.8;
 export let isMusicOn = true;
 export let isSfxOn = true;
 
-export function setMusicVolume(val) {
-    musicVolume = val;
-    if (bgMusic) bgMusic.volume = isMusicOn ? musicVolume : 0;
-    // Update both tracks in case they are paused but will be played
-    introMusic.volume = isMusicOn ? musicVolume : 0;
-    flowMusic.volume = isMusicOn ? musicVolume : 0;
-}
+
 
 export function setSfxVolume(val) {
     sfxVolume = val;
