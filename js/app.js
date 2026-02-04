@@ -32,6 +32,15 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(() => {
         Audio.startPreloadingFlow();
     }, 3000);
+
+    // Hide startup loader with a slight delay for smooth UX
+    const loader = document.getElementById('startup-loader');
+    if (loader) {
+        setTimeout(() => {
+            loader.style.opacity = '0';
+            setTimeout(() => loader.style.display = 'none', 600);
+        }, 800);
+    }
 });
 
 function setupEventListeners() {

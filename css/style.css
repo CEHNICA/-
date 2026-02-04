@@ -1050,23 +1050,115 @@
       font-weight: bold;
       margin: 10px 0;
     }
-/* --- Page Flip Animation --- */
-@keyframes slideOutLeft {
-    to { transform: translateX(-120%) rotate(-5deg); opacity: 0.5; }
-}
-@keyframes slideInRight {
-    from { transform: translateX(120%) rotate(5deg); opacity: 0.5; }
-    to { transform: translateX(0) rotate(0); opacity: 1; }
-}
-@keyframes slideOutRight {
-    to { transform: translateX(120%) rotate(5deg); opacity: 0.5; }
-}
-@keyframes slideInLeft {
-    from { transform: translateX(-120%) rotate(-5deg); opacity: 0.5; }
-    to { transform: translateX(0) rotate(0); opacity: 1; }
-}
 
-.card-container.anim-out-left { animation: slideOutLeft 0.3s ease-in forwards; }
-.card-container.anim-in-right { animation: slideInRight 0.3s ease-out forwards; }
-.card-container.anim-out-right { animation: slideOutRight 0.3s ease-in forwards; }
-.card-container.anim-in-left { animation: slideInLeft 0.3s ease-out forwards; }
+    /* --- Page Flip Animation --- */
+    @keyframes slideOutLeft {
+      to {
+        transform: translateX(-120%) rotate(-5deg);
+        opacity: 0.5;
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(120%) rotate(5deg);
+        opacity: 0.5;
+      }
+
+      to {
+        transform: translateX(0) rotate(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOutRight {
+      to {
+        transform: translateX(120%) rotate(5deg);
+        opacity: 0.5;
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        transform: translateX(-120%) rotate(-5deg);
+        opacity: 0.5;
+      }
+
+      to {
+        transform: translateX(0) rotate(0);
+        opacity: 1;
+      }
+    }
+
+    .card-container.anim-out-left {
+      animation: slideOutLeft 0.3s ease-in forwards;
+    }
+
+    .card-container.anim-in-right {
+      animation: slideInRight 0.3s ease-out forwards;
+    }
+
+    .card-container.anim-out-right {
+      animation: slideOutRight 0.3s ease-in forwards;
+    }
+
+    .card-container.anim-in-left {
+      animation: slideInLeft 0.3s ease-out forwards;
+    }
+
+    /* --- Startup Loader --- */
+    #startup-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #FDF6E3;
+      /* Match body bg */
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .loader-content {
+      text-align: center;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(52, 152, 219, 0.2);
+      border-top-color: #3498DB;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    .loader-text {
+      font-family: 'Outfit', sans-serif;
+      color: #7F8C8D;
+      font-size: 14px;
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
