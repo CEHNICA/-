@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
     UI.initUI();
 
     // Auto-play removed. Only triggered by Fullscreen interaction.
-    // Audio.playBackgroundMusic();
+    Audio.playIntroMusic(); // Use explicit intro music function, handles interaction fallback
 });
 
 function setupEventListeners() {
@@ -43,10 +43,8 @@ function setupEventListeners() {
     }
 
     document.getElementById('play-btn').addEventListener('click', UI.toggleAutoplay);
-    document.getElementById('sound-btn').addEventListener('click', () => {
-        Audio.toggleSoundState();
-        updateSoundBtnState();
-    });
+    // Removed conflicting global sound toggle. Sound settings are now handled in UI.js via modal.
+    // document.getElementById('sound-btn').addEventListener('click', ...); 
 
     document.getElementById('camera-btn').addEventListener('click', Camera.initCamera);
 
@@ -57,13 +55,15 @@ function setupEventListeners() {
     // Card interaction
     document.getElementById('flashcard').addEventListener('click', UI.handleCardClick);
 
+
     // Start Flow Button (Stop BG Music explicitly)
-    // Start Flow Button (Stop BG Music explicitly)
+    // Start Flow Button (Stop Intro Music, Start Rain)
     const startFlowBtn = document.querySelector('.start-flow-btn');
     if (startFlowBtn) {
         startFlowBtn.addEventListener('click', () => {
             Audio.initAudio();
-            Audio.stopBackgroundMusic(); // Force stop
+            Audio.playDoorSound(); // Play door opening sound
+            Audio.playFlowMusic(); // Switch to Rain (Flow) music
             UI.enterMainInterface();
         });
     }
@@ -146,16 +146,7 @@ function setupEventListeners() {
     document.getElementById('auto-next-toggle').addEventListener('change', (e) => UI.toggleAutoNextOnMastery(e.target));
 }
 
-function updateSoundBtnState() {
-    const btn = document.getElementById('sound-btn');
-    if (Audio.isSoundOn) {
-        btn.classList.add('active');
-        btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
-    } else {
-        btn.classList.remove('active');
-        btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
-    }
-}
+
 
 function toggleShuffle() {
     const isShuffle = Data.toggleShuffleMode();

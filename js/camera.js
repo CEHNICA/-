@@ -18,7 +18,10 @@ const FLIP_HOLD_DURATION = 300; // faster for flip (Palms)
 let videoStream = null;
 let animationFrameId = null;
 let lastProcessTime = 0;
-const PROCESS_INTERVAL = 100; // Throttle AI detection
+
+// Mobile detection
+const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const PROCESS_INTERVAL = isMobileDevice ? 150 : 100; // Slower on mobile for performance
 
 export async function initCamera() {
     if (isCameraInitializing) return;
@@ -50,11 +53,12 @@ export async function initCamera() {
         if (!hands) {
             if (window.Hands) {
                 hands = new window.Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
+                // Use lighter model on mobile for better performance
                 hands.setOptions({
-                    maxNumHands: 2,
-                    modelComplexity: 1,
-                    minDetectionConfidence: 0.5,
-                    minTrackingConfidence: 0.5
+                    maxNumHands: 2,  // Track both hands on all devices
+                    modelComplexity: isMobileDevice ? 0 : 1,  // Lite model on mobile
+                    minDetectionConfidence: isMobileDevice ? 0.6 : 0.5,
+                    minTrackingConfidence: isMobileDevice ? 0.6 : 0.5
                 });
                 hands.onResults(onHandResults);
             } else {
@@ -73,14 +77,16 @@ export async function initCamera() {
 
 async function startCameraStream() {
     try {
-        // Try simplified constraints first for reliability
-        const stream = await navigator.mediaDevices.getUserMedia({
+        // Mobile-optimized constraints: lower resolution for better performance
+        const constraints = {
             video: {
-                width: { ideal: 640 },
-                height: { ideal: 480 },
+                width: { ideal: isMobileDevice ? 320 : 640 },
+                height: { ideal: isMobileDevice ? 240 : 480 },
                 facingMode: "user"
             }
-        });
+        };
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
         videoStream = stream;
         const videoElement = document.getElementById('input_video');
@@ -101,7 +107,7 @@ async function startCameraStream() {
         isCameraInitializing = false;
 
         gestureEnableTime = Date.now() + 1000; // Warmup
-        showToast("✋ 手势控制已开启！<br>👌=掌握 | ✋=下一个", 3000);
+        showToast("手势控制已开启！OK=掌握，摊开双手=下一个", 3000);
 
         startVideoLoop();
     } catch (e) {

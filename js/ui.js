@@ -14,9 +14,80 @@ let idleTimer = null;
 let isNavigating = false;
 const IDLE_TIMEOUT = 3000;
 
+
+
 export function initUI() {
     setupIdleDetection();
     loadCard(Data.currentIndex);
+    setupSoundSettings();
+}
+
+function setupSoundSettings() {
+    const modal = document.getElementById('sound-settings-modal');
+    const saveBtn = document.getElementById('sound-settings-save');
+    const musicSlider = document.getElementById('music-volume-slider');
+    const musicDisplay = document.getElementById('music-volume-display');
+    const musicToggle = document.getElementById('music-toggle');
+    const sfxSlider = document.getElementById('sfx-volume-slider');
+    const sfxDisplay = document.getElementById('sfx-volume-display');
+    const sfxToggle = document.getElementById('sfx-toggle');
+
+    // Music Volume
+    musicSlider.addEventListener('input', (e) => {
+        const val = e.target.value;
+        musicDisplay.textContent = val + '%';
+        Audio.setMusicVolume(val / 100);
+    });
+
+    // Music Toggle
+    musicToggle.addEventListener('change', (e) => {
+        Audio.toggleMusic(e.target.checked);
+    });
+
+    // SFX Volume
+    sfxSlider.addEventListener('input', (e) => {
+        const val = e.target.value;
+        sfxDisplay.textContent = val + '%';
+        Audio.setSfxVolume(val / 100);
+    });
+
+    // SFX Toggle
+    sfxToggle.addEventListener('change', (e) => {
+        Audio.toggleSfx(e.target.checked);
+        updateSoundBtnState();
+    });
+
+    // Save/Close
+    saveBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+        showToast('🔊 声音设置已保存');
+        updateSoundBtnState();
+    });
+
+    // We removed global sound btn logic from old toggle, 
+    // now we connect it to open this modal instead
+    document.getElementById('sound-btn').addEventListener('click', (e) => {
+        e.stopPropagation(); // prevent other listeners
+        e.preventDefault();  // prevent standard toggle
+        modal.style.display = 'flex';
+    });
+
+    // Initial update
+    updateSoundBtnState();
+}
+
+export function updateSoundBtnState() {
+    const btn = document.getElementById('sound-btn');
+    if (!btn) return;
+
+    // Active if either Music or SFX is ON
+    if (Audio.isMusicOn || Audio.isSfxOn) {
+        btn.classList.add('active');
+        btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
+    } else {
+        btn.classList.remove('active');
+        btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
+    }
 }
 
 export function showToast(message, duration = 3000) {
@@ -584,7 +655,11 @@ export function enterMainInterface() {
 
                 document.getElementById('play-btn').style.display = 'flex';
                 document.getElementById('settings-btn').style.display = 'flex';
-                document.getElementById('camera-btn').style.display = 'flex';
+                // Only show camera button on desktop (gesture recognition not supported on mobile)
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                if (!isMobile) {
+                    document.getElementById('camera-btn').style.display = 'flex';
+                }
             }
         }, 30);
 

@@ -152,17 +152,58 @@
         </div>
     </div>
 
+    <!-- Sound Settings Modal -->
+    <div id="sound-settings-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 380px;">
+            <div class="modal-title">🔊 声音设置</div>
+
+            <div class="settings-group">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span class="settings-label" style="margin-bottom: 0;">🎵 背景音乐</span>
+                    <label class="switch">
+                        <input type="checkbox" id="music-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="range-container">
+                    <input type="range" min="0" max="100" value="100" class="range-slider" id="music-volume-slider">
+                    <span class="range-value" id="music-volume-display"
+                        style="color: #3498DB; font-weight:bold; width: 45px;">100%</span>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span class="settings-label" style="margin-bottom: 0;">🔔 音效</span>
+                    <label class="switch">
+                        <input type="checkbox" id="sfx-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="range-container">
+                    <input type="range" min="0" max="100" value="80" class="range-slider" id="sfx-volume-slider">
+                    <span class="range-value" id="sfx-volume-display"
+                        style="color: #2ECC71; font-weight:bold; width: 45px;">80%</span>
+                </div>
+            </div>
+
+            <button class="modal-btn" id="sound-settings-save"
+                style="background: #3498DB; box-shadow: 0 6px 0 #2980B9;">保存</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="help-modal">
         <div class="modal-content" style="max-width: 450px; text-align: left;">
             <div class="modal-title" style="text-align: center; margin-bottom: 25px;">使用指南</div>
 
-            <div style="margin-bottom: 25px;">
+            <!-- Desktop: Camera Gesture Control -->
+            <div id="help-gesture-desktop" style="margin-bottom: 25px;">
                 <h4 style="color: #2C3E50; margin-bottom: 12px; display:flex; align-items:center; gap:6px;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
                         <circle cx="12" cy="13" r="4" />
                     </svg>
-                    手势控制
+                    手势控制 (仅桌面端)
                 </h4>
                 <div
                     style="text-align:center; background:#FDF6E3; padding:15px; border-radius:12px; border:2px solid #eee; display: flex; justify-content: space-around;">
@@ -179,8 +220,34 @@
                 </div>
             </div>
 
-
-
+            <!-- Mobile: Touch Gesture Control -->
+            <div id="help-gesture-mobile" style="margin-bottom: 25px; display: none;">
+                <h4 style="color: #2C3E50; margin-bottom: 12px; display:flex; align-items:center; gap:6px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" />
+                        <path d="M12 6v6l4 2" />
+                    </svg>
+                    触控手势
+                </h4>
+                <div
+                    style="text-align:center; background:#FDF6E3; padding:15px; border-radius:12px; border:2px solid #eee; display: flex; justify-content: space-around;">
+                    <div style="text-align: center;">
+                        <div style="font-size:32px; margin-bottom:8px;">👆</div>
+                        <div style="font-size:12px; font-weight:bold; color:#9B59B6;">点击卡片</div>
+                        <div style="font-size:10px; color:#7F8C8D;">翻转查看答案</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size:32px; margin-bottom:8px;">👈👉</div>
+                        <div style="font-size:12px; font-weight:bold; color:#3498DB;">左右滑动</div>
+                        <div style="font-size:10px; color:#7F8C8D;">切换题目</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size:32px; margin-bottom:8px;">👇</div>
+                        <div style="font-size:12px; font-weight:bold; color:#2ECC71;">长按</div>
+                        <div style="font-size:10px; color:#7F8C8D;">标记已掌握</div>
+                    </div>
+                </div>
+            </div>
 
             <div style="margin-bottom: 25px;">
                 <h4 style="color: #2C3E50; margin-bottom: 10px; display:flex; align-items:center; gap:6px;">
@@ -191,9 +258,9 @@
                     极致沉浸模式
                 </h4>
                 <ul style="color: #7F8C8D; font-size: 13px; line-height: 1.8; list-style: none; padding-left: 5px;">
-                    <li>🤫 <strong>自动隐藏</strong>：鼠标静止 3 秒后，除了卡片外所有内容都会消失。</li>
-                    <li>🖱️ <strong>隐藏光标</strong>：沉浸时鼠标指针也会隐藏，杜绝干扰。</li>
-                    <li>👋 <strong>唤醒</strong>：移动鼠标或点击屏幕即可恢复界面。</li>
+                    <li>🤫 <strong>自动隐藏</strong>：静止 3 秒后，除卡片外所有内容消失。</li>
+                    <li>📱 <strong>移动端唤醒</strong>：点击屏幕顶部或底部边缘。</li>
+                    <li>🖥️ <strong>桌面端唤醒</strong>：移动鼠标即可恢复界面。</li>
                 </ul>
             </div>
 
@@ -201,6 +268,16 @@
                 style="margin-top: 15px; background: #2ECC71; box-shadow: 0 6px 0 #27AE60;">开始学习</button>
         </div>
     </div>
+    <script>
+        // Show appropriate help section based on device
+        (function () {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobile) {
+                document.getElementById('help-gesture-desktop').style.display = 'none';
+                document.getElementById('help-gesture-mobile').style.display = 'block';
+            }
+        })();
+    </script>
 
     <div class="container">
         <div class="header">
