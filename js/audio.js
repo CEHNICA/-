@@ -132,6 +132,7 @@ loadIntroSound(); // Start fetching immediately
 export let flowMusic = new Audio('下雨.mp3');
 flowMusic.loop = true;
 flowMusic.volume = musicVolume;
+flowMusic.preload = 'metadata'; // Optimize: Don't auto-download 24MB on start
 
 // Track state ('intro' | 'flow' | null)
 let currentMode = 'intro';
@@ -238,7 +239,7 @@ loadDoorSound();
 // Preload all audio files on page load for instant playback
 export function preloadAllSounds() {
     // Trigger loading by loading metadata
-    [victorySound, realFlipSound, flowMusic].forEach(audio => {
+    [victorySound, realFlipSound].forEach(audio => {
         audio.load();
     });
     // Door sound is preloaded via loadDoorSound()
